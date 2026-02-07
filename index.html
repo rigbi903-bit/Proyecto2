@@ -60,7 +60,6 @@
             </div>
             <div>
                 <h1 class="text-[10px] font-black tracking-tighter uppercase italic leading-none text-white">GG BUILDER <span class="text-indigo-400">V9.5</span></h1>
-                <span class="text-[8px] text-slate-500 font-bold uppercase italic text-xs">ADVANCED OFFSET COMBINATION</span>
             </div>
         </div>
         <div class="flex gap-2">
@@ -100,7 +99,7 @@
 
     <div id="modal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex-col z-50">
         <div class="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900">
-            <span class="text-[10px] font-black text-indigo-400 tracking-widest uppercase italic">SCRIPT LUA FINAL</span>
+            <span class="text-[10px] font-black text-indigo-400 tracking-widest uppercase italic">SCRIPT LUA</span>
             <button onclick="closeModal()" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button>
         </div>
         <div class="flex-1 overflow-auto p-4 bg-black">
@@ -126,28 +125,28 @@
             { n: 'Xor', v: 'gg.TYPE_XOR' }
         ];
 
-        const PROMPT_MODES = [{ n: 'BUSCAR', v: 'SEARCH' }, { n: 'EDITAR', v: 'EDIT' }];
+        const PROMPT_MODES = [{ n: 'Busqueda', v: 'SEARCH' }, { n: 'Editar resultados', v: 'EDIT' }];
         const GG_REGIONS = [{ n: 'Jh: Java heap', v: 'gg.REGION_JAVA_HEAP' }, { n: 'Ch: C++ heap', v: 'gg.REGION_C_HEAP' }, { n: 'Ca: C++ alloc', v: 'gg.REGION_C_ALLOC' }, { n: 'Cd: C++ data', v: 'gg.REGION_C_DATA' }, { n: 'Cb: C++ bss', v: 'gg.REGION_C_BSS' }, { n: 'A: Anonymous', v: 'gg.REGION_ANONYMOUS' }, { n: 'O: Other', v: 'gg.REGION_OTHER' }, { n: 'Xa: Code App', v: 'gg.REGION_CODE_APP' }, { n: 'S: Stack', v: 'gg.REGION_STACK' }];
         const GG_OPS = [{ n: '(+)', v: '+' }, { n: '(-)', v: '-' }];
 
         const blocksDef = [
             { id: 'menu_main', group: 'struct', type: TYPES.STRUCT, name: 'Menú Principal', color: 'bg-purple-600', icon: 'layout', params: ['Título'], def: ['MOD MENU'] },
             { id: 'menu_btn', group: 'struct', type: TYPES.STRUCT, name: 'Añadir Botón', color: 'bg-indigo-500', icon: 'square-plus', params: ['Nombre'], def: ['Función'] },
-            { id: 'search', group: 'memory', name: 'Buscar', color: 'bg-blue-600', icon: 'search', params: ['Valor', 'Tipo'], def: ['100', 'gg.TYPE_DWORD'] },
-            { id: 'edit', group: 'memory', name: 'Editar', color: 'bg-blue-500', icon: 'pencil', params: ['Valor', 'Tipo'], def: ['999', 'gg.TYPE_DWORD'] },
-            { id: 'refine', group: 'memory', name: 'Refinar', color: 'bg-sky-500', icon: 'filter', params: ['Valor', 'Tipo'], def: ['100', 'gg.TYPE_DWORD'] },
-            { id: 'limit', group: 'memory', name: 'Limitar', color: 'bg-cyan-600', icon: 'list-ordered', params: ['Cant'], def: ['100'] },
-            { id: 'region', group: 'memory', name: 'Rango Memoria', color: 'bg-teal-600', icon: 'database', params: ['Región'], def: ['gg.REGION_ANONYMOUS'] },
+            { id: 'search', group: 'memory', name: 'Buscar', color: 'bg-blue-600', icon: 'search', params: ['Valor', 'Tipo'], def: ['0', 'gg.TYPE_DWORD'] },
+            { id: 'edit', group: 'memory', name: 'Editar', color: 'bg-blue-500', icon: 'pencil', params: ['Valor', 'Tipo'], def: ['0', 'gg.TYPE_DWORD'] },
+            { id: 'refine', group: 'memory', name: 'Refinar', color: 'bg-sky-500', icon: 'filter', params: ['Valor', 'Tipo'], def: ['0', 'gg.TYPE_DWORD'] },
+            { id: 'limit', group: 'memory', name: 'Limitar', color: 'bg-cyan-600', icon: 'list-ordered', params: ['Cant'], def: ['0'] },
+            { id: 'region', group: 'memory', name: 'Rango Memoria', color: 'bg-teal-600', icon: 'database', params: ['Región'], def: ['gg.REGION_OTHER'] },
             { id: 'clear', group: 'memory', name: 'Limpiar', color: 'bg-rose-600', icon: 'eraser', params: [], def: [] },
             
             { id: 'off_base', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Base Offset', color: 'bg-pink-600', icon: 'anchor', params: [], def: [] },
-            { id: 'off_load', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Cargar Offset', color: 'bg-emerald-600', icon: 'list-plus', params: ['Op', 'Hex', 'Tipo'], def: ['+', '4', 'gg.TYPE_DWORD'] },
-            { id: 'off_edit', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Editar Offset', color: 'bg-rose-600', icon: 'pencil-line', params: ['Op', 'Hex', 'Valor', 'Tipo'], def: ['+', '1A0', '1', 'gg.TYPE_DWORD'] },
+            { id: 'off_load', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Cargar Offset', color: 'bg-emerald-600', icon: 'list-plus', params: ['Op', 'Hex', 'Tipo'], def: ['+', '0', 'gg.TYPE_DWORD'] },
+            { id: 'off_edit', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Editar Offset', color: 'bg-rose-600', icon: 'pencil-line', params: ['Op', 'Hex', 'Valor', 'Tipo'], def: ['+', '0', '0', 'gg.TYPE_DWORD'] },
             
-            { id: 'dual_prompt', group: 'control', name: 'Prompt (Dual)', color: 'bg-fuchsia-600', icon: 'keyboard', params: ['Msg', 'Modo', 'Tipo'], def: ['Valor', 'SEARCH', 'gg.TYPE_DWORD'] },
+            { id: 'dual_prompt', group: 'control', name: 'Prompt (Dual)', color: 'bg-fuchsia-600', icon: 'keyboard', params: ['Descripcion', 'Modo', 'Tipo'], def: ['Agrega un valor', 'SEARCH', 'gg.TYPE_DWORD'] },
             { id: 'sleep', group: 'control', name: 'Espera', color: 'bg-slate-500', icon: 'clock', params: ['ms'], def: ['500'] },
             { id: 'alert', group: 'control', name: 'Alerta', color: 'bg-yellow-600', icon: 'bell', params: ['Msg'], def: ['Hecho'] },
-            { id: 'toast', group: 'control', name: 'Toast', color: 'bg-orange-500', icon: 'zap', params: ['Msg'], def: ['OK'] },
+            { id: 'toast', group: 'control', name: 'Toast', color: 'bg-orange-500', icon: 'zap', params: ['Msg'], def: ['Hecho'] },
             { id: 'hide', group: 'control', name: 'Ocultar GG', color: 'bg-gray-600', icon: 'eye-off', params: [], def: [] },
             { id: 'pause', group: 'control', name: 'Pausar', color: 'bg-red-600', icon: 'pause', params: [], def: [] },
             { id: 'resume', group: 'control', name: 'Reanudar', color: 'bg-green-600', icon: 'play', params: [], def: [] }
