@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GG Master Builder - Atomic Engine V9.7</title>
+    <title>GG Master Builder - Atomic Engine V9.9 FIX FINAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; -webkit-tap-highlight-color: transparent; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
         .menu-child { 
@@ -57,13 +57,13 @@
             <div class="bg-indigo-600 p-1.5 rounded-lg shadow-lg">
                 <i data-lucide="shield-check" class="w-4 h-4 text-white"></i>
             </div>
-            <h1 class="text-[10px] font-black tracking-tighter uppercase italic leading-none">GG BUILDER <span class="text-indigo-400">V9.7</span></h1>
+            <h1 class="text-[10px] font-black tracking-tighter uppercase italic leading-none">GG BUILDER <span class="text-indigo-400">V9.9 ATOMIC</span></h1>
         </div>
         <div class="flex gap-2">
-            <button onclick="exportBackup()" title="Guardar" class="p-2 bg-slate-800 rounded-lg text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <button onclick="exportBackup()" title="Guardar Proyecto" class="p-2 bg-slate-800 rounded-lg text-emerald-400 hover:bg-emerald-500/10 transition-colors">
                 <i data-lucide="save" class="w-4 h-4"></i>
             </button>
-            <button onclick="document.getElementById('backup-input').click()" title="Cargar" class="p-2 bg-slate-800 rounded-lg text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <button onclick="document.getElementById('backup-input').click()" title="Cargar Proyecto" class="p-2 bg-slate-800 rounded-lg text-amber-400 hover:bg-amber-500/10 transition-colors">
                 <i data-lucide="folder-up" class="w-4 h-4"></i>
             </button>
             <button onclick="clearAll()" class="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-rose-400 transition-colors">
@@ -96,7 +96,7 @@
 
     <div id="modal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex-col z-50">
         <div class="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900">
-            <span class="text-[10px] font-black text-indigo-400 tracking-widest uppercase italic">SCRIPT LUA</span>
+            <span class="text-[10px] font-black text-indigo-400 tracking-widest uppercase italic">LUA BUILDER V9.9 FIX FINAL</span>
             <button onclick="closeModal()" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button>
         </div>
         <div class="flex-1 overflow-auto p-4 bg-black">
@@ -122,20 +122,22 @@
             { n: 'Word', v: 'gg.TYPE_WORD' }, 
             { n: 'Byte', v: 'gg.TYPE_BYTE' }, 
             { n: 'Qword', v: 'gg.TYPE_QWORD' }, 
-            { n: 'A', v: 'gg.TYPE_AUTO' }
+            { n: 'A (Auto)', v: 'gg.TYPE_AUTO' },
+            { n: 'Xor', v: 'gg.TYPE_XOR' }
         ];
 
-        const PROMPT_MODES = [{ n: 'Busqueda', v: 'SEARCH' }, { n: 'Editar', v: 'EDIT' }];
+        const PROMPT_MODES = [{ n: 'Búsqueda', v: 'SEARCH' }, { n: 'Editar', v: 'EDIT' }];
 
         const GG_REGIONS = [
-            { n: 'Jh', v: 'gg.REGION_JAVA_HEAP' }, 
-            { n: 'Ch', v: 'gg.REGION_C_HEAP' }, 
-            { n: 'Ca', v: 'gg.REGION_C_ALLOC' }, 
-            { n: 'Cd', v: 'gg.REGION_C_DATA' }, 
-            { n: 'Cb', v: 'gg.REGION_C_BSS' }, 
-            { n: 'Ps', v: 'gg.REGION_PPSSPP' }, 
-            { n: 'A', v: 'gg.REGION_ANONYMOUS' }, 
-            { n: 'O', v: 'gg.REGION_OTHER' }
+            { n: 'Jh (Java Heap)', v: 'gg.REGION_JAVA_HEAP' }, 
+            { n: 'Ch (C Heap)', v: 'gg.REGION_C_HEAP' }, 
+            { n: 'Ca (C Alloc)', v: 'gg.REGION_C_ALLOC' }, 
+            { n: 'Cd (C Data)', v: 'gg.REGION_C_DATA' }, 
+            { n: 'Cb (C Bss)', v: 'gg.REGION_C_BSS' }, 
+            { n: 'Ps (PPSSPP)', v: 'gg.REGION_PPSSPP' }, 
+            { n: 'A (Anon)', v: 'gg.REGION_ANONYMOUS' }, 
+            { n: 'O (Other)', v: 'gg.REGION_OTHER' },
+            { n: 'Xa (Code App)', v: 'gg.REGION_CODE_APP' }
         ];
 
         const GG_OPS = [{ n: '(+)', v: '+' }, { n: '(-)', v: '-' }];
@@ -146,16 +148,16 @@
             { id: 'search', group: 'memory', name: 'Buscar', color: 'bg-blue-600', icon: 'search', params: ['Valor', 'Tipo'], def: ['0', 'gg.TYPE_DWORD'] },
             { id: 'edit', group: 'memory', name: 'Editar', color: 'bg-blue-500', icon: 'pencil', params: ['Valor', 'Tipo'], def: ['0', 'gg.TYPE_DWORD'] },
             { id: 'refine', group: 'memory', name: 'Refinar', color: 'bg-sky-500', icon: 'filter', params: ['Valor', 'Tipo'], def: ['0', 'gg.TYPE_DWORD'] },
-            { id: 'limit', group: 'memory', name: 'Limitar', color: 'bg-cyan-600', icon: 'list-ordered', params: ['Cant'], def: ['0'] },
+            { id: 'limit', group: 'memory', name: 'Limitar', color: 'bg-cyan-600', icon: 'list-ordered', params: ['Cant'], def: ['100'] },
             { id: 'region', group: 'memory', name: 'Rango Memoria', color: 'bg-teal-600', icon: 'database', params: ['Región'], def: ['gg.REGION_OTHER'] },
             { id: 'clear', group: 'memory', name: 'Limpiar', color: 'bg-rose-600', icon: 'eraser', params: [], def: [] },
             { id: 'off_base', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Base Offset', color: 'bg-pink-600', icon: 'anchor', params: [], def: [] },
             { id: 'off_load', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Cargar Offset', color: 'bg-emerald-600', icon: 'list-plus', params: ['Op', 'Hex', 'Tipo'], def: ['+', '0', 'gg.TYPE_DWORD'] },
             { id: 'off_edit', group: 'offset', type: TYPES.OFFSET_MOD, name: 'Editar Offset', color: 'bg-rose-600', icon: 'pencil-line', params: ['Op', 'Hex', 'Valor', 'Tipo'], def: ['+', '0', '0', 'gg.TYPE_DWORD'] },
-            { id: 'dual_prompt', group: 'control', name: 'Prompt (Dual)', color: 'bg-fuchsia-600', icon: 'keyboard', params: ['Descripcion', 'Modo', 'Tipo'], def: ['Agrega un valor', 'SEARCH', 'gg.TYPE_DWORD'] },
+            { id: 'dual_prompt', group: 'control', name: 'Prompt (Dual)', color: 'bg-fuchsia-600', icon: 'keyboard', params: ['Descripción', 'Modo', 'Tipo'], def: ['Ingresa valor', 'SEARCH', 'gg.TYPE_DWORD'] },
             { id: 'sleep', group: 'control', name: 'Espera', color: 'bg-slate-500', icon: 'clock', params: ['ms'], def: ['500'] },
-            { id: 'alert', group: 'control', name: 'Alerta', color: 'bg-yellow-600', icon: 'bell', params: ['Msg'], def: ['Hecho'] },
-            { id: 'toast', group: 'control', name: 'Toast', color: 'bg-orange-500', icon: 'zap', params: ['Msg'], def: ['Hecho'] },
+            { id: 'alert', group: 'control', name: 'Alerta', color: 'bg-yellow-600', icon: 'bell', params: ['Msg'], def: ['Completado'] },
+            { id: 'toast', group: 'control', name: 'Toast', color: 'bg-orange-500', icon: 'zap', params: ['Msg'], def: ['Ejecutado'] },
             { id: 'hide', group: 'control', name: 'Ocultar GG', color: 'bg-gray-600', icon: 'eye-off', params: [], def: [] },
             { id: 'pause', group: 'control', name: 'Pausar', color: 'bg-red-600', icon: 'pause', params: [], def: [] },
             { id: 'resume', group: 'control', name: 'Reanudar', color: 'bg-green-600', icon: 'play', params: [], def: [] }
@@ -189,46 +191,41 @@
             render();
         }
 
-        function moveBlock(currentIndex, direction) {
-            const block = activeBlocks[currentIndex];
-            if (block.parentId !== 'none') {
+        function moveBlock(id, direction) {
+            const index = activeBlocks.findIndex(b => b.instanceId === id);
+            if (index === -1) return;
+            const block = activeBlocks[index];
+
+            // Si es un bloque principal (sin padre)
+            if (block.parentId === 'none') {
+                const rootBlocks = activeBlocks.filter(b => b.parentId === 'none');
+                const rootIdx = rootBlocks.findIndex(b => b.instanceId === id);
+                const targetRootIdx = rootIdx + direction;
+                
+                if (targetRootIdx < 0 || targetRootIdx >= rootBlocks.length) return;
+
+                const getGroup = (bid) => [activeBlocks.find(b => b.instanceId === bid), ...activeBlocks.filter(b => b.parentId === bid)];
+                let newOrder = [];
+                rootBlocks.forEach((rb, idx) => {
+                    if (idx === rootIdx) return;
+                    if (idx === targetRootIdx && direction === -1) newOrder.push(...getGroup(id));
+                    newOrder.push(...getGroup(rb.instanceId));
+                    if (idx === targetRootIdx && direction === 1) newOrder.push(...getGroup(id));
+                });
+                activeBlocks = newOrder;
+            } else {
+                // Si es una acción dentro de un botón
                 const siblings = activeBlocks.filter(b => b.parentId === block.parentId);
                 const localIdx = siblings.indexOf(block);
                 const targetLocalIdx = localIdx + direction;
+                
                 if (targetLocalIdx < 0 || targetLocalIdx >= siblings.length) return;
 
                 const targetSibling = siblings[targetLocalIdx];
-                const targetGlobalIdx = activeBlocks.indexOf(targetSibling);
-                [activeBlocks[currentIndex], activeBlocks[targetGlobalIdx]] = [activeBlocks[targetGlobalIdx], activeBlocks[currentIndex]];
-                render();
-                return;
+                const globalIdxA = activeBlocks.indexOf(block);
+                const globalIdxB = activeBlocks.indexOf(targetSibling);
+                [activeBlocks[globalIdxA], activeBlocks[globalIdxB]] = [activeBlocks[globalIdxB], activeBlocks[globalIdxA]];
             }
-
-            const getBlockGroup = (parentId) => {
-                const group = [activeBlocks.find(b => b.instanceId === parentId)];
-                activeBlocks.forEach(b => { if(b.parentId === parentId) group.push(b); });
-                return group;
-            };
-
-            const rootBlocks = activeBlocks.filter(b => b.parentId === 'none');
-            const rootIdx = rootBlocks.findIndex(b => b.instanceId === block.instanceId);
-            const targetRootIdx = rootIdx + direction;
-
-            if (targetRootIdx < 0 || targetRootIdx >= rootBlocks.length) return;
-
-            let newOrder = [];
-            rootBlocks.forEach((rb, idx) => {
-                if (idx === rootIdx) return;
-                if (idx === targetRootIdx && direction === -1) {
-                    newOrder.push(...getBlockGroup(block.instanceId));
-                }
-                newOrder.push(...getBlockGroup(rb.instanceId));
-                if (idx === targetRootIdx && direction === 1) {
-                    newOrder.push(...getBlockGroup(block.instanceId));
-                }
-            });
-
-            activeBlocks = newOrder;
             render();
         }
 
@@ -249,15 +246,13 @@
             render();
         }
 
-        // Función corregida para actualizar el estado real del bloque
         function updateParamValue(instanceId, paramIndex, newValue) {
             const block = activeBlocks.find(b => b.instanceId === instanceId);
             if (block) {
                 block.values[paramIndex] = newValue;
-                // No renderizamos aquí para no perder el foco si es input, 
-                // pero sí para los select para confirmar el cambio visual.
                 const bDef = blocksDef.find(d => d.id === block.id);
-                if (['Tipo', 'Modo', 'Región', 'Op'].includes(bDef.params[paramIndex])) {
+                const pName = bDef.params[paramIndex];
+                if (['Tipo', 'Modo', 'Región', 'Op'].includes(pName)) {
                     render();
                 }
             }
@@ -270,38 +265,14 @@
             emptyState.classList.add('hidden');
 
             const btnBlocks = activeBlocks.filter(b => b.id === 'menu_btn');
-            const btnOptionsHtml = `<option value="none">-- Libre --</option>` + 
+            const btnOptionsHtml = `<option value="none">-- Acción Suelta --</option>` + 
                 btnBlocks.map(btn => `<option value="${btn.instanceId}">Botón: ${btn.values[0]}</option>`).join('');
 
             let html = '';
             activeBlocks.forEach((b, i) => {
                 if (b.parentId !== 'none') return;
-
-                const isBtn = b.id === 'menu_btn';
-                const isCollapsed = collapsedStates[b.instanceId];
                 const children = activeBlocks.filter(c => c.parentId === b.instanceId);
-                const paramsHtml = b.params.map((p, pi) => renderParam(b, p, pi, false)).join('');
-
-                let childrenHtml = '';
-                if (!isCollapsed) {
-                    childrenHtml = children.map(child => {
-                        const globalIdx = activeBlocks.indexOf(child);
-                        return `
-                        <div class="menu-child">
-                            <div class="${child.color} rounded-lg shadow border-l-4 border-black/20 p-2">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[8px] font-black uppercase text-white/80 flex items-center gap-1"><i data-lucide="${child.icon}" class="w-3 h-3"></i> ${child.name}</span>
-                                    <div class="flex gap-1">
-                                        <button onclick="moveBlock(${globalIdx},-1)" class="p-1"><i data-lucide="chevron-up" class="w-3 h-3 text-white/50"></i></button>
-                                        <button onclick="moveBlock(${globalIdx},1)" class="p-1"><i data-lucide="chevron-down" class="w-3 h-3 text-white/50"></i></button>
-                                        <button onclick="removeBlock('${child.instanceId}')" class="p-1 text-rose-300"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-                                    </div>
-                                </div>
-                                <div class="flex flex-wrap gap-1.5">${child.params.map((p, pi) => renderParam(child, p, pi, true)).join('')}</div>
-                            </div>
-                        </div>`;
-                    }).join('');
-                }
+                const isCollapsed = collapsedStates[b.instanceId];
 
                 html += `
                 <div class="group-container">
@@ -312,28 +283,31 @@
                                 <span class="text-[10px] font-black uppercase text-white">${b.name}</span>
                             </div>
                             <div class="flex gap-1">
-                                <button onclick="moveBlock(${i},-1)" class="p-1.5 bg-black/20 rounded-md hover:bg-black/40 text-white"><i data-lucide="chevron-up" class="w-3 h-3"></i></button>
-                                <button onclick="moveBlock(${i},1)" class="p-1.5 bg-black/20 rounded-md hover:bg-black/40 text-white"><i data-lucide="chevron-down" class="w-3 h-3"></i></button>
-                                <button onclick="removeBlock('${b.instanceId}')" class="p-1.5 bg-rose-900/40 rounded-md ml-1 hover:bg-rose-800/60 text-white"><i data-lucide="trash" class="w-3 h-3"></i></button>
+                                <button onclick="moveBlock('${b.instanceId}',-1)" class="p-1.5 bg-black/20 rounded-md text-white"><i data-lucide="chevron-up" class="w-3 h-3"></i></button>
+                                <button onclick="moveBlock('${b.instanceId}',1)" class="p-1.5 bg-black/20 rounded-md text-white"><i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+                                <button onclick="removeBlock('${b.instanceId}')" class="p-1.5 bg-rose-900/40 rounded-md text-white ml-1"><i data-lucide="trash" class="w-3 h-3"></i></button>
                             </div>
                         </div>
                         <div class="p-3 bg-black/10">
-                            <div class="flex flex-wrap gap-2">${paramsHtml}</div>
-                            ${isBtn ? `
-                            <div class="mt-3 flex justify-between items-center">
-                                <button onclick="collapsedStates['${b.instanceId}'] = !collapsedStates['${b.instanceId}']; render();" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg text-[9px] font-black text-white flex gap-2">
-                                    ${children.length} ACCIONES <i data-lucide="chevron-down" class="w-3 h-3 ${isCollapsed ? '' : 'rotate-icon'}"></i>
-                                </button>
-                            </div>` : ''}
-                            ${(b.context === TYPES.MENU_ACT) ? `
-                            <div class="mt-3">
-                                <select onchange="updateParent('${b.instanceId}', this.value)" class="w-full bg-black/40 text-[9px] font-black rounded-lg px-2 py-2 border border-white/10 text-indigo-300 outline-none">
-                                    ${btnOptionsHtml.replace(`value="${b.parentId}"`, `value="${b.parentId}" selected`)}
-                                </select>
-                            </div>` : ''}
+                            <div class="flex flex-wrap gap-2">${b.params.map((p, pi) => renderParam(b, p, pi, false)).join('')}</div>
+                            ${b.id === 'menu_btn' ? `<div class="mt-3"><button onclick="collapsedStates['${b.instanceId}'] = !collapsedStates['${b.instanceId}']; render();" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg text-[9px] font-black text-white flex gap-2 uppercase items-center">${children.length} Acciones <i data-lucide="chevron-down" class="w-3 h-3 ${isCollapsed ? '' : 'rotate-icon'}"></i></button></div>` : ''}
+                            ${b.context === TYPES.MENU_ACT ? `<div class="mt-3"><select onchange="updateParent('${b.instanceId}', this.value)" class="w-full bg-black/40 text-[9px] font-black rounded-lg px-2 py-2 border border-white/10 text-indigo-300 outline-none">${btnOptionsHtml.replace(`value="${b.parentId}"`, `value="${b.parentId}" selected`)}</select></div>` : ''}
                         </div>
                     </div>
-                    <div class="${isCollapsed ? 'hidden' : ''} mb-4">${childrenHtml}</div>
+                    <div class="${isCollapsed ? 'hidden' : ''} mb-4">${children.map(child => `
+                        <div class="menu-child">
+                            <div class="${child.color} rounded-lg shadow border-l-4 border-black/20 p-2">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[8px] font-black uppercase text-white/80 flex items-center gap-1"><i data-lucide="${child.icon}" class="w-3 h-3"></i> ${child.name}</span>
+                                    <div class="flex gap-1">
+                                        <button onclick="moveBlock('${child.instanceId}',-1)" class="p-1 text-white/80 bg-black/20 rounded"><i data-lucide="chevron-up" class="w-2.5 h-2.5"></i></button>
+                                        <button onclick="moveBlock('${child.instanceId}',1)" class="p-1 text-white/80 bg-black/20 rounded"><i data-lucide="chevron-down" class="w-2.5 h-2.5"></i></button>
+                                        <button onclick="removeBlock('${child.instanceId}')" class="p-1 text-rose-300 ml-1"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5">${child.params.map((p, pi) => renderParam(child, p, pi, true)).join('')}</div>
+                            </div>
+                        </div>`).join('')}</div>
                 </div>`;
             });
             ws.innerHTML = html;
@@ -343,26 +317,24 @@
         function renderParam(b, p, pi, isMini) {
             const val = b.values[pi];
             const size = isMini ? "text-[10px] px-2 py-1" : "text-[11px] px-3 py-2";
-            const label = isMini ? "text-[7px]" : "text-[8px]";
+            const options = p === 'Tipo' ? GG_TYPES : p === 'Modo' ? PROMPT_MODES : p === 'Región' ? GG_REGIONS : p === 'Op' ? GG_OPS : null;
             
-            let input = '';
-            if (['Tipo', 'Modo', 'Región', 'Op'].includes(p)) {
-                const options = p === 'Tipo' ? GG_TYPES : p === 'Modo' ? PROMPT_MODES : p === 'Región' ? GG_REGIONS : GG_OPS;
-                input = `<select onchange="updateParamValue('${b.instanceId}', ${pi}, this.value)" class="bg-black/40 border border-white/5 rounded-lg ${size} outline-none text-white w-full">
+            if (options) {
+                return `<div class="flex flex-col flex-1 min-w-[80px]"><label class="text-[7px] font-black uppercase opacity-60 text-white mb-0.5">${p}</label>
+                <select onchange="updateParamValue('${b.instanceId}', ${pi}, this.value)" class="bg-black/40 border border-white/5 rounded-lg ${size} outline-none text-white w-full">
                     ${options.map(o => `<option value="${o.v}" ${val === o.v ? 'selected' : ''}>${o.n}</option>`).join('')}
-                </select>`;
-            } else {
-                input = `<input type="text" value="${val}" oninput="updateParamValue('${b.instanceId}', ${pi}, this.value)" class="bg-black/40 border border-white/5 rounded-lg ${size} outline-none text-white w-full">`;
+                </select></div>`;
             }
-            return `<div class="flex flex-col flex-1 min-w-[80px]"><label class="${label} font-black uppercase opacity-60 text-white mb-0.5">${p}</label>${input}</div>`;
+            return `<div class="flex flex-col flex-1 min-w-[80px]"><label class="text-[7px] font-black uppercase opacity-60 text-white mb-0.5">${p}</label>
+            <input type="text" value="${val}" oninput="updateParamValue('${b.instanceId}', ${pi}, this.value)" class="bg-black/40 border border-white/5 rounded-lg ${size} outline-none text-white w-full"></div>`;
         }
 
         function generateLua() {
             const menuMain = activeBlocks.find(b => b.id === 'menu_main');
             const btns = activeBlocks.filter(b => b.id === 'menu_btn');
-            if (!menuMain || btns.length === 0) { alert("Configura el Menú y al menos un Botón"); return; }
+            if (!menuMain || btns.length === 0) { alert("Configura el Menú y Botones"); return; }
 
-            let lua = `gg.setVisible(false)\nwhile true do\nif gg.isVisible(true) then gg.setVisible(false) end\n`;
+            let lua = `-- GG Builder V9.9 FIX FINAL\ngg.setVisible(false)\nwhile true do\nif gg.isVisible(true) then gg.setVisible(false) end\n`;
             lua += `local opt = {${btns.map(b => `'${b.values[0]}'`).join(',')},'Ocultar','Salir'}\n`;
             lua += `local sel = gg.choice(opt,nil,'${menuMain.values[0]}')\n`;
             
@@ -377,10 +349,12 @@
                         lua += `local res = gg.getResults(gg.getResultCount())\nlocal eL, lL = {}, {}\nfor i, v in ipairs(res) do\n`;
                         inOff = true; addr = "v.address";
                     } else if (c.id === 'off_load' && inOff) {
-                        addr = `(${addr}) ${c.values[0]} ${c.values[1].includes('0x') ? c.values[1] : '0x'+c.values[1]}`;
+                        const h = c.values[1].includes('0x') ? c.values[1] : '0x'+c.values[1];
+                        addr = `(${addr}) ${c.values[0]} ${h}`;
                         lua += `table.insert(lL,{address=${addr},flags=${c.values[2]}})\n`;
                     } else if (c.id === 'off_edit' && inOff) {
-                        const cur = `(${addr}) ${c.values[0]} ${c.values[1].includes('0x') ? c.values[1] : '0x'+c.values[1]}`;
+                        const h = c.values[1].includes('0x') ? c.values[1] : '0x'+c.values[1];
+                        const cur = `(${addr}) ${c.values[0]} ${h}`;
                         lua += `table.insert(eL,{address=${cur},flags=${c.values[3]},value=${c.values[2]}})\n`;
                     } else {
                         if (inOff) { lua += `end\ngg.setValues(eL)\ngg.loadResults(lL)\n`; inOff = false; }
@@ -407,8 +381,9 @@
                 case 'toast': return `gg.toast('${b.values[0]}')`;
                 case 'pause': return `gg.processPause()`;
                 case 'resume': return `gg.processResume()`;
+                case 'hide': return `gg.setVisible(false)`;
                 case 'dual_prompt':
-                    return `local p = gg.prompt({'${b.values[0]}'},nil,{'number'})\nif p then\n${b.values[1] === 'SEARCH' ? 'gg.clearResults()\ngg.searchNumber(p[1],'+b.values[2]+')' : 'gg.editAll(p[1],'+b.values[2]+')'}\nend`;
+                    return `local p = gg.prompt({'${b.values[0]}'},nil,{'number'})\nif p then\n  if '${b.values[1]}' == 'SEARCH' then\n    gg.clearResults()\n    gg.searchNumber(p[1],${b.values[2]})\n  else\n    gg.getResults(gg.getResultCount())\n    gg.editAll(p[1],${b.values[2]})\n  end\nend`;
                 default: return "";
             }
         }
@@ -416,7 +391,7 @@
         function exportBackup() {
             const data = JSON.stringify({activeBlocks, collapsedStates});
             const blob = new Blob([data], {type: 'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Copia_de_seguridad_V1.txt'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'proyecto_final_fix.txt'; a.click();
         }
 
         function importBackup(e) {
@@ -425,21 +400,22 @@
                 const d = JSON.parse(ev.target.result);
                 activeBlocks = d.activeBlocks; collapsedStates = d.collapsedStates || {};
                 render();
+                showToast("Proyecto Cargado");
             }; r.readAsText(f);
         }
 
         function copyCode() {
             const t = document.createElement('textarea'); t.value = document.getElementById('code-box').innerText; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-            showToast("Copiado");
+            showToast("Código Copiado");
         }
         function downloadLua() {
             const b = new Blob([document.getElementById('code-box').innerText], {type:'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download='Script.lua'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download='script_final.lua'; a.click();
         }
-        function clearAll() { if(confirm("Borrar todo?")) { activeBlocks = []; render(); } }
+        function clearAll() { if(confirm("¿Borrar todo?")) { activeBlocks = []; render(); } }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         function showToast(m) {
-            const t = document.createElement('div'); t.className = "toast-animate fixed top-8 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-2 rounded-full z-[100] text-[10px] font-black";
+            const t = document.createElement('div'); t.className = "toast-animate fixed bottom-10 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-2 rounded-full z-[100] text-[10px] font-black shadow-xl";
             t.innerText = m; document.body.appendChild(t); setTimeout(()=>t.remove(), 2000);
         }
 
