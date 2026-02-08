@@ -96,7 +96,7 @@
 
     <div id="modal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex-col z-50">
         <div class="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900">
-            <span class="text-[10px] font-black text-indigo-400 tracking-widest uppercase italic">LUA BUILDER V9.9 FIX FINAL</span>
+            <span class="text-[10px] font-black text-indigo-400 tracking-widest uppercase italic">Script generado - LUA</span>
             <button onclick="closeModal()" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button>
         </div>
         <div class="flex-1 overflow-auto p-4 bg-black">
@@ -334,7 +334,7 @@
             const btns = activeBlocks.filter(b => b.id === 'menu_btn');
             if (!menuMain || btns.length === 0) { alert("Configura el Menú y Botones"); return; }
 
-            let lua = `-- GG Builder V9.9 FIX FINAL\ngg.setVisible(false)\nwhile true do\nif gg.isVisible(true) then gg.setVisible(false) end\n`;
+            let lua = `-- Generador de script - by gamer guardian\ngg.setVisible(false)\nwhile true do\nif gg.isVisible(true) then gg.setVisible(false) end\n`;
             lua += `local opt = {${btns.map(b => `'${b.values[0]}'`).join(',')},'Ocultar','Salir'}\n`;
             lua += `local sel = gg.choice(opt,nil,'${menuMain.values[0]}')\n`;
             
@@ -410,7 +410,7 @@
         }
         function downloadLua() {
             const b = new Blob([document.getElementById('code-box').innerText], {type:'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download='script_final.lua'; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download='Script.lua'; a.click();
         }
         function clearAll() { if(confirm("¿Borrar todo?")) { activeBlocks = []; render(); } }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
